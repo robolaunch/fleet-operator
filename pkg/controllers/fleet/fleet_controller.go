@@ -19,6 +19,7 @@ package fleet
 import (
 	"context"
 
+	corev1 "k8s.io/api/core/v1"
 	"k8s.io/apimachinery/pkg/api/errors"
 	"k8s.io/apimachinery/pkg/runtime"
 	ctrl "sigs.k8s.io/controller-runtime"
@@ -27,6 +28,7 @@ import (
 
 	"github.com/go-logr/logr"
 	fleetv1alpha1 "github.com/robolaunch/fleet-operator/pkg/api/roboscale.io/v1alpha1"
+	robotv1alpha1 "github.com/robolaunch/robot-operator/pkg/api/roboscale.io/v1alpha1"
 )
 
 // FleetReconciler reconciles a Fleet object
@@ -38,6 +40,9 @@ type FleetReconciler struct {
 //+kubebuilder:rbac:groups=fleet.roboscale.io,resources=fleets,verbs=get;list;watch;create;update;patch;delete
 //+kubebuilder:rbac:groups=fleet.roboscale.io,resources=fleets/status,verbs=get;update;patch
 //+kubebuilder:rbac:groups=fleet.roboscale.io,resources=fleets/finalizers,verbs=update
+
+//+kubebuilder:rbac:groups=core,resources=namespaces,verbs=get;list;watch;create;update;patch;delete
+//+kubebuilder:rbac:groups=robot.roboscale.io,resources=discoveryservers,verbs=get;list;watch;create;update;patch;delete
 
 var logger logr.Logger
 
@@ -87,5 +92,7 @@ func (r *FleetReconciler) reconcileCheckResources(ctx context.Context, instance 
 func (r *FleetReconciler) SetupWithManager(mgr ctrl.Manager) error {
 	return ctrl.NewControllerManagedBy(mgr).
 		For(&fleetv1alpha1.Fleet{}).
+		Owns(&corev1.Namespace{}).
+		Owns(&robotv1alpha1.DiscoveryServer{}).
 		Complete(r)
 }

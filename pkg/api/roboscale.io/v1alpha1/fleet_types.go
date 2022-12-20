@@ -17,15 +17,38 @@ limitations under the License.
 package v1alpha1
 
 import (
+	robotv1alpha1 "github.com/robolaunch/robot-operator/pkg/api/roboscale.io/v1alpha1"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
+	"k8s.io/apimachinery/pkg/types"
 )
 
 // FleetSpec defines the desired state of Fleet
 type FleetSpec struct {
+	DiscoveryServerTemplate robotv1alpha1.DiscoveryServerSpec `json:"discoveryServerTemplate,omitempty"`
 }
+
+type NamespaceStatus struct {
+	Created bool `json:"created,omitempty"`
+}
+
+type DiscoveryServerInstanceStatus struct {
+	Created bool                                `json:"created,omitempty"`
+	Status  robotv1alpha1.DiscoveryServerStatus `json:"status,omitempty"`
+}
+
+type FleetPhase string
+
+const (
+	FleetPhaseCreatingNamespace       FleetPhase = "CreatingNamespace"
+	FleetPhaseCreatingDiscoveryServer FleetPhase = "CreatingDiscoveryServer"
+	FleetPhaseReady                   FleetPhase = "Ready"
+)
 
 // FleetStatus defines the observed state of Fleet
 type FleetStatus struct {
+	Phase                 FleetPhase                    `json:"phase,omitempty"`
+	NamespaceStatus       NamespaceStatus               `json:"namespaceStatus,omitempty"`
+	DiscoveryServerStatus DiscoveryServerInstanceStatus `json:"discoveryServerStatus,omitempty"`
 }
 
 //+kubebuilder:resource:scope=Cluster
@@ -52,4 +75,10 @@ type FleetList struct {
 
 func init() {
 	SchemeBuilder.Register(&Fleet{}, &FleetList{})
+}
+
+func (fleet *Fleet) GetNamespaceMetadata() *types.NamespacedName {
+	return &types.NamespacedName{
+		Name: fleet.Name,
+	}
 }

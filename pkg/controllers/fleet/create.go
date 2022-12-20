@@ -29,3 +29,23 @@ func (r *FleetReconciler) createNamespace(ctx context.Context, instance *fleetv1
 	logger.Info("STATUS: Namespace " + ns.Name + " is created.")
 	return nil
 }
+
+func (r *FleetReconciler) createDiscoveryServer(ctx context.Context, instance *fleetv1alpha1.Fleet, dsNamespacedName *types.NamespacedName) error {
+
+	discoveryServer := resources.GetDiscoveryServer(instance, dsNamespacedName)
+
+	err := ctrl.SetControllerReference(instance, discoveryServer, r.Scheme)
+	if err != nil {
+		return err
+	}
+
+	err = r.Create(ctx, discoveryServer)
+	if err != nil && errors.IsAlreadyExists(err) {
+		return nil
+	} else if err != nil {
+		return err
+	}
+
+	logger.Info("STATUS: Discovery server " + discoveryServer.Name + " is created.")
+	return nil
+}

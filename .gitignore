@@ -24,3 +24,9 @@ Dockerfile.cross
 *.swp
 *.swo
 *~
+
+# local files & folders
+*.local
+
+# vendor
+vendor

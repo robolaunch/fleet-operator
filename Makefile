@@ -115,6 +115,35 @@ deploy: manifests kustomize ## Deploy controller to the K8s cluster specified in
 	cd config/manager && $(KUSTOMIZE) edit set image controller=${IMG}
 	$(KUSTOMIZE) build config/default | kubectl apply -f -
 
+.PHONY: extract
+extract: manifests kustomize ## Extract controller YAMLs, not deploy
+	cd config/manager && $(KUSTOMIZE) edit set image controller=${IMG}
+	$(KUSTOMIZE) build config/default > hack/deploy.local/fleet_operator.yaml
+
+.PHONY: select-node
+select-node: 
+	yq -i e '(select(.kind == "Deployment") | .spec.template.spec.nodeSelector."${LABEL_KEY}") = "${LABEL_VAL}"' hack/deploy.local/fleet_operator.yaml
+
+.PHONY: apply
+apply: 
+	kubectl apply -f hack/deploy.local/fleet_operator.yaml
+
+# Production
+
+.PHONY: gh-extract
+gh-extract: manifests kustomize ## Extract controller YAMLs, not deploy
+	cd config/manager && $(KUSTOMIZE) edit set image controller=${IMG}
+	$(KUSTOMIZE) build config/default > hack/deploy/fleet_operator.yaml
+
+.PHONY: gh-select-node
+gh-select-node: 
+	yq -i e '(select(.kind == "Deployment") | .spec.template.spec.nodeSelector."${LABEL_KEY}") = "${LABEL_VAL}"' hack/deploy/fleet_operator.yaml
+
+.PHONY: gh-apply
+gh-apply: 
+	kubectl apply -f hack/deploy/fleet_operator.yaml
+
+
 .PHONY: undeploy
 undeploy: ## Undeploy controller from the K8s cluster specified in ~/.kube/config. Call with ignore-not-found=true to ignore resource not found errors during deletion.
 	$(KUSTOMIZE) build config/default | kubectl delete --ignore-not-found=$(ignore-not-found) -f -

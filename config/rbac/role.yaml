@@ -6,6 +6,18 @@ metadata:
   name: manager-role
 rules:
 - apiGroups:
+  - ""
+  resources:
+  - namespaces
+  verbs:
+  - create
+  - delete
+  - get
+  - list
+  - patch
+  - update
+  - watch
+- apiGroups:
   - fleet.roboscale.io
   resources:
   - fleets
@@ -31,3 +43,15 @@ rules:
   - get
   - patch
   - update
+- apiGroups:
+  - robot.roboscale.io
+  resources:
+  - discoveryservers
+  verbs:
+  - create
+  - delete
+  - get
+  - list
+  - patch
+  - update
+  - watch

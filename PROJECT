@@ -1,0 +1,6 @@
+domain: roboscale.io
+layout:
+- go.kubebuilder.io/v3
+projectName: fleet-operator
+repo: github.com/robolaunch/fleet-operator
+version: "3"

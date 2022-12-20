@@ -33,6 +33,7 @@ import (
 
 	fleetv1alpha1 "github.com/robolaunch/fleet-operator/pkg/api/roboscale.io/v1alpha1"
 	fleet "github.com/robolaunch/fleet-operator/pkg/controllers/fleet"
+	robotv1alpha1 "github.com/robolaunch/robot-operator/pkg/api/roboscale.io/v1alpha1"
 	//+kubebuilder:scaffold:imports
 )
 
@@ -45,6 +46,7 @@ func init() {
 	utilruntime.Must(clientgoscheme.AddToScheme(scheme))
 
 	utilruntime.Must(fleetv1alpha1.AddToScheme(scheme))
+	utilruntime.Must(robotv1alpha1.AddToScheme(scheme))
 	//+kubebuilder:scaffold:scheme
 }
 

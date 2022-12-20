@@ -87,6 +87,6 @@ func (fleet *Fleet) GetNamespaceMetadata() *types.NamespacedName {
 func (fleet *Fleet) GetDiscoveryServerMetadata() *types.NamespacedName {
 	return &types.NamespacedName{
 		Name:      fleet.Name + internal.DISCOVERY_SERVER_FLEET_POSTFIX,
-		Namespace: fleet.Namespace,
+		Namespace: fleet.GetNamespaceMetadata().Name,
 	}
 }

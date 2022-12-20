@@ -81,6 +81,41 @@ func (r *FleetReconciler) Reconcile(ctx context.Context, req ctrl.Request) (ctrl
 }
 
 func (r *FleetReconciler) reconcileCheckStatus(ctx context.Context, instance *fleetv1alpha1.Fleet) error {
+
+	switch instance.Status.NamespaceStatus.Created {
+	case true:
+
+		switch instance.Status.DiscoveryServerStatus.Created {
+		case true:
+
+			switch instance.Status.DiscoveryServerStatus.Status.Phase {
+			case robotv1alpha1.DiscoveryServerPhaseReady:
+
+				// wait for attachments
+
+			default:
+
+				// wait for discovery server
+
+			}
+
+		case false:
+
+			// create discovery server
+
+		}
+
+	case false:
+
+		instance.Status.Phase = fleetv1alpha1.FleetPhaseCreatingNamespace
+		err := r.createNamespace(ctx, instance, instance.GetNamespaceMetadata())
+		if err != nil {
+			return err
+		}
+		instance.Status.NamespaceStatus.Created = true
+
+	}
+
 	return nil
 }
 

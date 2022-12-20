@@ -19,6 +19,7 @@ package v1alpha1
 import (
 	robotv1alpha1 "github.com/robolaunch/robot-operator/pkg/api/roboscale.io/v1alpha1"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
+	"k8s.io/apimachinery/pkg/types"
 )
 
 // FleetSpec defines the desired state of Fleet
@@ -74,4 +75,10 @@ type FleetList struct {
 
 func init() {
 	SchemeBuilder.Register(&Fleet{}, &FleetList{})
+}
+
+func (fleet *Fleet) GetNamespaceMetadata() *types.NamespacedName {
+	return &types.NamespacedName{
+		Name: fleet.Name,
+	}
 }

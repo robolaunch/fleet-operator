@@ -24,8 +24,22 @@ import (
 type FleetSpec struct {
 }
 
+type NamespaceStatus struct {
+	Created bool `json:"created,omitempty"`
+}
+
+type FleetPhase string
+
+const (
+	FleetPhaseCreatingNamespace       FleetPhase = "CreatingNamespace"
+	FleetPhaseCreatingDiscoveryServer FleetPhase = "CreatingDiscoveryServer"
+	FleetPhaseReady                   FleetPhase = "Ready"
+)
+
 // FleetStatus defines the observed state of Fleet
 type FleetStatus struct {
+	Phase           FleetPhase      `json:"phase,omitempty"`
+	NamespaceStatus NamespaceStatus `json:"namespaceStatus,omitempty"`
 }
 
 //+kubebuilder:resource:scope=Cluster

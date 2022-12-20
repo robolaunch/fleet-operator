@@ -17,6 +17,7 @@ limitations under the License.
 package v1alpha1
 
 import (
+	"github.com/robolaunch/fleet-operator/internal"
 	robotv1alpha1 "github.com/robolaunch/robot-operator/pkg/api/roboscale.io/v1alpha1"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/apimachinery/pkg/types"
@@ -80,5 +81,12 @@ func init() {
 func (fleet *Fleet) GetNamespaceMetadata() *types.NamespacedName {
 	return &types.NamespacedName{
 		Name: fleet.Name,
+	}
+}
+
+func (fleet *Fleet) GetDiscoveryServerMetadata() *types.NamespacedName {
+	return &types.NamespacedName{
+		Name:      fleet.Name + internal.DISCOVERY_SERVER_FLEET_POSTFIX,
+		Namespace: fleet.Namespace,
 	}
 }

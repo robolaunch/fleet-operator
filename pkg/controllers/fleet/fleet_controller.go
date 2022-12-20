@@ -120,6 +120,12 @@ func (r *FleetReconciler) reconcileCheckStatus(ctx context.Context, instance *fl
 }
 
 func (r *FleetReconciler) reconcileCheckResources(ctx context.Context, instance *fleetv1alpha1.Fleet) error {
+
+	err := r.reconcileCheckNamespace(ctx, instance)
+	if err != nil {
+		return err
+	}
+
 	return nil
 }
 

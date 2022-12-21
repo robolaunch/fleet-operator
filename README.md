@@ -30,8 +30,8 @@
 
 <div align="center">
   <p align="center">
-    <a href="https://hub.docker.com/u/robolaunchio/robot-controller-manager">
-      <img src="https://img.shields.io/docker/pulls/robolaunchio/robot-controller-manager" alt="pulls">
+    <a href="https://hub.docker.com/u/robolaunchio/fleet-controller-manager">
+      <img src="https://img.shields.io/docker/pulls/robolaunchio/fleet-controller-manager" alt="pulls">
     </a>
     <!-- <a href="https://github.com/robolaunch/fleet-operator/actions">
       <img src="https://github.com/robolaunch/fleet-operator/actions/workflows/docker-build-for-push.yml/badge.svg" alt="build">

@@ -93,6 +93,11 @@ func (r *FleetReconciler) reconcileCheckStatus(ctx context.Context, instance *fl
 
 				instance.Status.Phase = fleetv1alpha1.FleetPhaseReady
 
+				err := r.reconcileHandleAttachments(ctx, instance)
+				if err != nil {
+					return err
+				}
+
 			}
 
 		case false:

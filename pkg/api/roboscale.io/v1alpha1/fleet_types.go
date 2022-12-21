@@ -19,6 +19,7 @@ package v1alpha1
 import (
 	"github.com/robolaunch/fleet-operator/internal"
 	robotv1alpha1 "github.com/robolaunch/robot-operator/pkg/api/roboscale.io/v1alpha1"
+	corev1 "k8s.io/api/core/v1"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/apimachinery/pkg/types"
 )
@@ -45,11 +46,18 @@ const (
 	FleetPhaseReady                   FleetPhase = "Ready"
 )
 
+type AttachedRobot struct {
+	Reference corev1.ObjectReference   `json:"reference,omitempty"`
+	Phase     robotv1alpha1.RobotPhase `json:"status,omitempty"`
+}
+
 // FleetStatus defines the observed state of Fleet
 type FleetStatus struct {
 	Phase                 FleetPhase                    `json:"phase,omitempty"`
 	NamespaceStatus       NamespaceStatus               `json:"namespaceStatus,omitempty"`
 	DiscoveryServerStatus DiscoveryServerInstanceStatus `json:"discoveryServerStatus,omitempty"`
+	// Attached launch object information
+	AttachedRobots []AttachedRobot `json:"attachedRobots,omitempty"`
 }
 
 //+kubebuilder:resource:scope=Cluster

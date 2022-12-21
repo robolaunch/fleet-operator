@@ -9,6 +9,11 @@ const (
 	PHYSICAL_INSTANCE_LABEL_KEY = "robolaunch.io/physical-instance"
 )
 
+// Fleet label
+const (
+	FLEET_LABEL_KEY = "robolaunch.io/fleet"
+)
+
 // Fleet resource postfixes
 const (
 	DISCOVERY_SERVER_FLEET_POSTFIX = "-discovery"

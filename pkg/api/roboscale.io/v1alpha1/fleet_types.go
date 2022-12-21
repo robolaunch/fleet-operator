@@ -46,9 +46,15 @@ const (
 	FleetPhaseReady                   FleetPhase = "Ready"
 )
 
+type FleetCompatibilityStatus struct {
+	IsCompatible bool   `json:"isCompatible"`
+	Reason       string `json:"reason,omitempty"`
+}
+
 type AttachedRobot struct {
-	Reference corev1.ObjectReference   `json:"reference,omitempty"`
-	Phase     robotv1alpha1.RobotPhase `json:"status,omitempty"`
+	Reference          corev1.ObjectReference   `json:"reference,omitempty"`
+	Phase              robotv1alpha1.RobotPhase `json:"status,omitempty"`
+	FleetCompatibility FleetCompatibilityStatus `json:"fleetCompatibility,omitempty"`
 }
 
 // FleetStatus defines the observed state of Fleet

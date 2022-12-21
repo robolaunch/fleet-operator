@@ -1,0 +1,12 @@
+apiVersion: fleet.roboscale.io/v1alpha1
+kind: Fleet
+metadata:
+  labels:
+    app.kubernetes.io/name: fleet
+    app.kubernetes.io/instance: fleet-sample
+    app.kubernetes.io/part-of: fleet-operator
+    app.kuberentes.io/managed-by: kustomize
+    app.kubernetes.io/created-by: fleet-operator
+  name: fleet-sample
+spec:
+  # TODO(user): Add fields here

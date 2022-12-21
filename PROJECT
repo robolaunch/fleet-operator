@@ -3,4 +3,18 @@ layout:
 - go.kubebuilder.io/v3
 projectName: fleet-operator
 repo: github.com/robolaunch/fleet-operator
+resources:
+- api:
+    crdVersion: v1
+    namespaced: true
+  controller: true
+  domain: roboscale.io
+  group: fleet
+  kind: Fleet
+  path: github.com/robolaunch/fleet-operator/pkg/api/roboscale.io/v1alpha1
+  version: v1alpha1
+  webhooks:
+    defaulting: true
+    validation: true
+    webhookVersion: v1
 version: "3"

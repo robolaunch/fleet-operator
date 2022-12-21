@@ -22,11 +22,16 @@ import (
 	corev1 "k8s.io/api/core/v1"
 	"k8s.io/apimachinery/pkg/api/errors"
 	"k8s.io/apimachinery/pkg/runtime"
+	"k8s.io/apimachinery/pkg/types"
 	ctrl "sigs.k8s.io/controller-runtime"
 	"sigs.k8s.io/controller-runtime/pkg/client"
+	"sigs.k8s.io/controller-runtime/pkg/handler"
 	"sigs.k8s.io/controller-runtime/pkg/log"
+	"sigs.k8s.io/controller-runtime/pkg/reconcile"
+	"sigs.k8s.io/controller-runtime/pkg/source"
 
 	"github.com/go-logr/logr"
+	"github.com/robolaunch/fleet-operator/internal/label"
 	fleetv1alpha1 "github.com/robolaunch/fleet-operator/pkg/api/roboscale.io/v1alpha1"
 	robotv1alpha1 "github.com/robolaunch/robot-operator/pkg/api/roboscale.io/v1alpha1"
 )
@@ -43,6 +48,7 @@ type FleetReconciler struct {
 
 //+kubebuilder:rbac:groups=core,resources=namespaces,verbs=get;list;watch;create;update;patch;delete
 //+kubebuilder:rbac:groups=robot.roboscale.io,resources=discoveryservers,verbs=get;list;watch;create;update;patch;delete
+//+kubebuilder:rbac:groups=robot.roboscale.io,resources=robots,verbs=get;list;watch;create;update;patch;delete
 
 var logger logr.Logger
 
@@ -93,6 +99,11 @@ func (r *FleetReconciler) reconcileCheckStatus(ctx context.Context, instance *fl
 
 				instance.Status.Phase = fleetv1alpha1.FleetPhaseReady
 
+				err := r.reconcileHandleAttachments(ctx, instance)
+				if err != nil {
+					return err
+				}
+
 			}
 
 		case false:
@@ -132,6 +143,11 @@ func (r *FleetReconciler) reconcileCheckResources(ctx context.Context, instance 
 		return err
 	}
 
+	err = r.reconcileCheckAttachedRobots(ctx, instance)
+	if err != nil {
+		return err
+	}
+
 	return nil
 }
 
@@ -141,5 +157,32 @@ func (r *FleetReconciler) SetupWithManager(mgr ctrl.Manager) error {
 		For(&fleetv1alpha1.Fleet{}).
 		Owns(&corev1.Namespace{}).
 		Owns(&robotv1alpha1.DiscoveryServer{}).
+		Watches(
+			&source.Kind{Type: &robotv1alpha1.Robot{}},
+			handler.EnqueueRequestsFromMapFunc(r.watchRobots),
+		).
 		Complete(r)
+}
+
+func (r *FleetReconciler) watchRobots(o client.Object) []reconcile.Request {
+
+	obj := o.(*robotv1alpha1.Robot)
+
+	robot := &fleetv1alpha1.Fleet{}
+	err := r.Get(context.TODO(), types.NamespacedName{
+		Name:      label.GetTargetFleet(obj),
+		Namespace: obj.Namespace,
+	}, robot)
+	if err != nil {
+		return []reconcile.Request{}
+	}
+
+	return []reconcile.Request{
+		{
+			NamespacedName: types.NamespacedName{
+				Name:      robot.Name,
+				Namespace: robot.Namespace,
+			},
+		},
+	}
 }

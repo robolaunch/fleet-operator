@@ -25,6 +25,7 @@ func GetDiscoveryServer(fleet *fleetv1alpha1.Fleet, dsNamespacedName *types.Name
 		ObjectMeta: metav1.ObjectMeta{
 			Name:      dsNamespacedName.Name,
 			Namespace: dsNamespacedName.Namespace,
+			Labels:    fleet.Labels,
 		},
 		Spec: fleet.Spec.DiscoveryServerTemplate,
 	}

@@ -55,3 +55,15 @@ rules:
   - patch
   - update
   - watch
+- apiGroups:
+  - robot.roboscale.io
+  resources:
+  - robots
+  verbs:
+  - create
+  - delete
+  - get
+  - list
+  - patch
+  - update
+  - watch

@@ -5,4 +5,4 @@ kind: Kustomization
 images:
 - name: controller
   newName: robolaunchio/fleet-controller-manager-dev
-  newTag: v0.0.5
+  newTag: v0.1.04

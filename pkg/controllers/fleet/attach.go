@@ -55,6 +55,22 @@ func (r *FleetReconciler) reconcileAttachRobots(ctx context.Context, instance *f
 	instance.Status.AttachedRobots = []fleetv1alpha1.AttachedRobot{}
 
 	for _, robot := range robotList.Items {
+
+		fleetCompatibility := fleetv1alpha1.FleetCompatibilityStatus{}
+		fleetCompatibility.IsCompatible = true
+
+		err := checkRobotDiscovery(*instance, robot)
+		if err != nil {
+			fleetCompatibility.IsCompatible = false
+			fleetCompatibility.Reason = err.Error()
+		}
+
+		err = checkTenancy(*instance, robot)
+		if err != nil {
+			fleetCompatibility.IsCompatible = false
+			fleetCompatibility.Reason = err.Error()
+		}
+
 		instance.Status.AttachedRobots = append(instance.Status.AttachedRobots, fleetv1alpha1.AttachedRobot{
 			Reference: corev1.ObjectReference{
 				Kind:            robot.Kind,
@@ -64,7 +80,10 @@ func (r *FleetReconciler) reconcileAttachRobots(ctx context.Context, instance *f
 				APIVersion:      robot.APIVersion,
 				ResourceVersion: robot.ResourceVersion,
 			},
+			Phase:              robot.Status.Phase,
+			FleetCompatibility: fleetCompatibility,
 		})
+
 	}
 
 	return nil

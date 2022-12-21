@@ -56,6 +56,10 @@ func (r *FleetReconciler) reconcileCheckAttachedRobots(ctx context.Context, inst
 			return err
 		} else {
 
+			obj.FleetCompatibility.IsCompatible = true
+			obj.FleetCompatibility.Reason = ""
+			obj.Phase = robot.Status.Phase
+
 			err := checkRobotDiscovery(*instance, *robot)
 			if err != nil {
 				obj.FleetCompatibility.IsCompatible = false
@@ -68,7 +72,6 @@ func (r *FleetReconciler) reconcileCheckAttachedRobots(ctx context.Context, inst
 				obj.FleetCompatibility.Reason = err.Error()
 			}
 
-			obj.Phase = robot.Status.Phase
 		}
 
 		instance.Status.AttachedRobots[k] = obj

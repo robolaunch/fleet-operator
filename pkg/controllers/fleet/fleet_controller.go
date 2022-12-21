@@ -137,6 +137,11 @@ func (r *FleetReconciler) reconcileCheckResources(ctx context.Context, instance 
 		return err
 	}
 
+	err = r.reconcileCheckAttachedRobots(ctx, instance)
+	if err != nil {
+		return err
+	}
+
 	return nil
 }
 

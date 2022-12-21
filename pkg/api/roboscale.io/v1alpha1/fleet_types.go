@@ -53,7 +53,7 @@ type FleetCompatibilityStatus struct {
 
 type AttachedRobot struct {
 	Reference          corev1.ObjectReference   `json:"reference,omitempty"`
-	Phase              robotv1alpha1.RobotPhase `json:"status,omitempty"`
+	Phase              robotv1alpha1.RobotPhase `json:"phase,omitempty"`
 	FleetCompatibility FleetCompatibilityStatus `json:"fleetCompatibility,omitempty"`
 }
 

@@ -96,5 +96,10 @@ func (r *Fleet) checkTenancyLabels() error {
 	if _, ok := labels[internal.CLOUD_INSTANCE_LABEL_KEY]; !ok {
 		return errors.New("cloud instance label should be added with key " + internal.CLOUD_INSTANCE_LABEL_KEY)
 	}
+
+	if _, ok := labels[internal.CLOUD_INSTANCE_ALIAS_LABEL_KEY]; !ok {
+		return errors.New("cloud instance alias label should be added with key " + internal.CLOUD_INSTANCE_ALIAS_LABEL_KEY)
+	}
+
 	return nil
 }

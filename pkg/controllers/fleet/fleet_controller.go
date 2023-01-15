@@ -90,7 +90,7 @@ func (r *FleetReconciler) Reconcile(ctx context.Context, req ctrl.Request) (ctrl
 
 func (r *FleetReconciler) reconcileCheckStatus(ctx context.Context, instance *fleetv1alpha1.Fleet) error {
 
-	switch instance.Status.NamespaceStatus.Created {
+	switch instance.Status.NamespaceStatus.Ready {
 	case true:
 
 		switch instance.Status.DiscoveryServerStatus.Created {
@@ -127,6 +127,7 @@ func (r *FleetReconciler) reconcileCheckStatus(ctx context.Context, instance *fl
 			return err
 		}
 		instance.Status.NamespaceStatus.Created = true
+		instance.Status.NamespaceStatus.Ready = true
 
 	}
 

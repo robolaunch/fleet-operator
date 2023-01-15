@@ -27,10 +27,12 @@ import (
 // FleetSpec defines the desired state of Fleet
 type FleetSpec struct {
 	DiscoveryServerTemplate robotv1alpha1.DiscoveryServerSpec `json:"discoveryServerTemplate,omitempty"`
+	Hybrid                  bool                              `json:"hybrid,omitempty"`
 }
 
 type NamespaceStatus struct {
 	Created bool `json:"created,omitempty"`
+	Ready   bool `json:"ready,omitempty"`
 }
 
 type DiscoveryServerInstanceStatus struct {

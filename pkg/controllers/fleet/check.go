@@ -23,6 +23,7 @@ func (r *FleetReconciler) reconcileCheckNamespace(ctx context.Context, instance 
 		return err
 	} else {
 		instance.Status.NamespaceStatus.Created = true
+		instance.Status.NamespaceStatus.Ready = true
 	}
 
 	return nil

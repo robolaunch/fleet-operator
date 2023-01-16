@@ -67,3 +67,15 @@ rules:
   - patch
   - update
   - watch
+- apiGroups:
+  - types.kubefed.io
+  resources:
+  - federatednamespaces
+  verbs:
+  - create
+  - delete
+  - get
+  - list
+  - patch
+  - update
+  - watch

@@ -108,6 +108,12 @@ spec:
                   type:
                     type: string
                 type: object
+              hybrid:
+                type: boolean
+              instances:
+                items:
+                  type: string
+                type: array
             type: object
           status:
             description: FleetStatus defines the observed state of Fleet
@@ -240,6 +246,10 @@ spec:
               namespaceStatus:
                 properties:
                   created:
+                    type: boolean
+                  federated:
+                    type: boolean
+                  ready:
                     type: boolean
                 type: object
               phase:

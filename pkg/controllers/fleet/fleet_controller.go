@@ -18,6 +18,8 @@ package fleet
 
 import (
 	"context"
+	goErr "errors"
+	"time"
 
 	corev1 "k8s.io/api/core/v1"
 	"k8s.io/apimachinery/pkg/api/errors"
@@ -32,6 +34,7 @@ import (
 	"sigs.k8s.io/controller-runtime/pkg/source"
 
 	"github.com/go-logr/logr"
+	fleetErr "github.com/robolaunch/fleet-operator/internal/error"
 	"github.com/robolaunch/fleet-operator/internal/label"
 	fleetv1alpha1 "github.com/robolaunch/fleet-operator/pkg/api/roboscale.io/v1alpha1"
 	robotv1alpha1 "github.com/robolaunch/robot-operator/pkg/api/roboscale.io/v1alpha1"
@@ -51,6 +54,7 @@ type FleetReconciler struct {
 //+kubebuilder:rbac:groups=core,resources=namespaces,verbs=get;list;watch;create;update;patch;delete
 //+kubebuilder:rbac:groups=robot.roboscale.io,resources=discoveryservers,verbs=get;list;watch;create;update;patch;delete
 //+kubebuilder:rbac:groups=robot.roboscale.io,resources=robots,verbs=get;list;watch;create;update;patch;delete
+//+kubebuilder:rbac:groups=types.kubefed.io,resources=federatednamespaces,verbs=get;list;watch;create;update;patch;delete
 
 var logger logr.Logger
 
@@ -63,6 +67,21 @@ func (r *FleetReconciler) Reconcile(ctx context.Context, req ctrl.Request) (ctrl
 			return ctrl.Result{}, nil
 		}
 		return ctrl.Result{}, err
+	}
+
+	if instance.Spec.Hybrid && label.GetInstanceType(instance) == label.InstanceTypePhysicalInstance {
+		err = r.reconcileCheckRemoteNamespace(ctx, instance)
+		if err != nil {
+			var e *fleetErr.NamespaceNotFoundError
+			if goErr.As(err, &e) {
+				logger.Info("STATUS: Searching for namespace.")
+				return ctrl.Result{
+					Requeue:      true,
+					RequeueAfter: 3 * time.Second,
+				}, nil
+			}
+			return ctrl.Result{}, nil
+		}
 	}
 
 	err = r.reconcileCheckStatus(ctx, instance)
@@ -121,13 +140,56 @@ func (r *FleetReconciler) reconcileCheckStatus(ctx context.Context, instance *fl
 
 	case false:
 
-		instance.Status.Phase = fleetv1alpha1.FleetPhaseCreatingNamespace
-		err := r.createNamespace(ctx, instance, instance.GetNamespaceMetadata())
-		if err != nil {
-			return err
+		switch instance.Spec.Hybrid {
+		case true:
+
+			switch label.GetInstanceType(instance) {
+			case label.InstanceTypeCloudInstance:
+
+				switch instance.Status.NamespaceStatus.Created {
+				case true:
+
+					switch instance.Status.NamespaceStatus.Federated {
+					case false:
+
+						instance.Status.Phase = fleetv1alpha1.FleetPhaseCreatingNamespace
+						err := r.createFederatedNamespace(ctx, instance, instance.GetNamespaceMetadata())
+						if err != nil {
+							return err
+						}
+						instance.Status.NamespaceStatus.Federated = true
+						instance.Status.NamespaceStatus.Ready = true
+
+					}
+
+				case false:
+
+					instance.Status.Phase = fleetv1alpha1.FleetPhaseCreatingNamespace
+					err := r.createNamespace(ctx, instance, instance.GetNamespaceMetadata())
+					if err != nil {
+						return err
+					}
+					instance.Status.NamespaceStatus.Created = true
+
+				}
+
+			case label.InstanceTypePhysicalInstance:
+
+				// do nothing
+
+			}
+
+		case false:
+
+			instance.Status.Phase = fleetv1alpha1.FleetPhaseCreatingNamespace
+			err := r.createNamespace(ctx, instance, instance.GetNamespaceMetadata())
+			if err != nil {
+				return err
+			}
+			instance.Status.NamespaceStatus.Created = true
+			instance.Status.NamespaceStatus.Ready = true
+
 		}
-		instance.Status.NamespaceStatus.Created = true
-		instance.Status.NamespaceStatus.Ready = true
 
 	}
 

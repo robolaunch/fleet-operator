@@ -251,8 +251,8 @@ github.com/prometheus/procfs v0.6.0/go.mod h1:cz+aTbrPOrUb4q7XlbU9ygM+/jj0fzG6c1
 github.com/prometheus/procfs v0.7.3/go.mod h1:cz+aTbrPOrUb4q7XlbU9ygM+/jj0fzG6c1xBZuNvfVA=
 github.com/prometheus/procfs v0.8.0 h1:ODq8ZFEaYeCaZOJlZZdJA2AbQR98dSHSM1KW/You5mo=
 github.com/prometheus/procfs v0.8.0/go.mod h1:z7EfXMXOkbkqb9IINtpCn86r/to3BnA0uaxHdg830/4=
-github.com/robolaunch/robot-operator v0.1.7 h1:yd3mZfJim2BisW1P9cc0dqNvhJxB/grfo9KsoxRqUG4=
-github.com/robolaunch/robot-operator v0.1.7/go.mod h1:69wCVmbHlRa43jlC3oq6VZmp09mR/CLzUEyAwNfRqdc=
+github.com/robolaunch/robot-operator v0.1.8 h1:fivs/8UPwFX1fHpfV3QbtcsWf0ulOawxetzk9Evs6OQ=
+github.com/robolaunch/robot-operator v0.1.8/go.mod h1:69wCVmbHlRa43jlC3oq6VZmp09mR/CLzUEyAwNfRqdc=
 github.com/rogpeppe/go-internal v1.3.0/go.mod h1:M8bDsm7K2OlrFYOpmOWEs/qY81heoFRclV5y23lUDJ4=
 github.com/sirupsen/logrus v1.2.0/go.mod h1:LxeOpSwHxABJmUn/MG1IvRgCAasNZTLOkJPxbbu5VWo=
 github.com/sirupsen/logrus v1.4.2/go.mod h1:tLMulIdttU9McNUspp0xgXVQah82FyeX6MwdIuYE2rE=

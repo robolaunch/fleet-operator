@@ -5,24 +5,94 @@ import (
 	goErr "errors"
 	"reflect"
 
+	fleetErr "github.com/robolaunch/fleet-operator/internal/error"
 	"github.com/robolaunch/fleet-operator/internal/label"
 	fleetv1alpha1 "github.com/robolaunch/fleet-operator/pkg/api/roboscale.io/v1alpha1"
 	robotv1alpha1 "github.com/robolaunch/robot-operator/pkg/api/roboscale.io/v1alpha1"
 	corev1 "k8s.io/api/core/v1"
 	"k8s.io/apimachinery/pkg/api/errors"
+	v1 "k8s.io/apimachinery/pkg/apis/meta/v1"
+	"k8s.io/apimachinery/pkg/runtime/schema"
 	"k8s.io/apimachinery/pkg/types"
 )
 
 func (r *FleetReconciler) reconcileCheckNamespace(ctx context.Context, instance *fleetv1alpha1.Fleet) error {
 
+	switch instance.Spec.Hybrid {
+	case true:
+
+		switch label.GetInstanceType(instance) {
+		case label.InstanceTypeCloudInstance:
+
+			// check ns
+			namespaceQuery := &corev1.Namespace{}
+			err := r.Get(ctx, *instance.GetNamespaceMetadata(), namespaceQuery)
+			if err != nil && errors.IsNotFound(err) {
+				instance.Status.NamespaceStatus = fleetv1alpha1.NamespaceStatus{}
+			} else if err != nil {
+				return err
+			} else {
+				instance.Status.NamespaceStatus.Created = true
+
+				// check federated ns
+				resourceInterface := r.DynamicClient.Resource(schema.GroupVersionResource{
+					Group:    "types.kubefed.io",
+					Version:  "v1beta1",
+					Resource: "federatednamespaces",
+				})
+
+				_, err = resourceInterface.Get(ctx, instance.GetNamespaceMetadata().Name, v1.GetOptions{})
+				if err != nil {
+					instance.Status.NamespaceStatus.Federated = false
+					instance.Status.NamespaceStatus.Ready = false
+				}
+
+				instance.Status.NamespaceStatus.Federated = true
+				instance.Status.NamespaceStatus.Ready = true
+			}
+
+		}
+
+	case false:
+
+		namespaceQuery := &corev1.Namespace{}
+		err := r.Get(ctx, *instance.GetNamespaceMetadata(), namespaceQuery)
+		if err != nil && errors.IsNotFound(err) {
+			instance.Status.NamespaceStatus = fleetv1alpha1.NamespaceStatus{}
+		} else if err != nil {
+			return err
+		} else {
+			instance.Status.NamespaceStatus.Created = true
+			instance.Status.NamespaceStatus.Ready = true
+		}
+
+	}
+
+	return nil
+}
+
+func (r *FleetReconciler) reconcileCheckRemoteNamespace(ctx context.Context, instance *fleetv1alpha1.Fleet) error {
+
 	namespaceQuery := &corev1.Namespace{}
 	err := r.Get(ctx, *instance.GetNamespaceMetadata(), namespaceQuery)
 	if err != nil && errors.IsNotFound(err) {
 		instance.Status.NamespaceStatus = fleetv1alpha1.NamespaceStatus{}
+		instance.Status.Phase = fleetv1alpha1.FleetPhaseCheckingRemoteNamespace
+
+		err := r.reconcileUpdateInstanceStatus(ctx, instance)
+		if err != nil {
+			return err
+		}
+
+		return &fleetErr.NamespaceNotFoundError{
+			ResourceKind:      instance.Kind,
+			ResourceName:      instance.Name,
+			ResourceNamespace: instance.Namespace,
+		}
 	} else if err != nil {
 		return err
 	} else {
-		instance.Status.NamespaceStatus.Created = true
+		instance.Status.NamespaceStatus.Ready = true
 	}
 
 	return nil

@@ -41,14 +41,15 @@ func (r *FleetReconciler) reconcileCheckNamespace(ctx context.Context, instance 
 					Resource: "federatednamespaces",
 				})
 
-				_, err = resourceInterface.Get(ctx, instance.GetNamespaceMetadata().Name, v1.GetOptions{})
+				instance.Status.NamespaceStatus.Federated = true
+				instance.Status.NamespaceStatus.Ready = true
+
+				_, err = resourceInterface.Namespace(instance.GetNamespaceMetadata().Name).Get(ctx, instance.GetNamespaceMetadata().Name, v1.GetOptions{})
 				if err != nil {
 					instance.Status.NamespaceStatus.Federated = false
 					instance.Status.NamespaceStatus.Ready = false
 				}
 
-				instance.Status.NamespaceStatus.Federated = true
-				instance.Status.NamespaceStatus.Ready = true
 			}
 
 		}

@@ -28,25 +28,19 @@ import (
 type FleetSpec struct {
 	DiscoveryServerTemplate robotv1alpha1.DiscoveryServerSpec `json:"discoveryServerTemplate,omitempty"`
 	Hybrid                  bool                              `json:"hybrid,omitempty"`
+	Instances               []string                          `json:"instances,omitempty"`
 }
 
 type NamespaceStatus struct {
-	Created bool `json:"created,omitempty"`
-	Ready   bool `json:"ready,omitempty"`
+	Created   bool `json:"created,omitempty"`
+	Federated bool `json:"federated,omitempty"`
+	Ready     bool `json:"ready,omitempty"`
 }
 
 type DiscoveryServerInstanceStatus struct {
 	Created bool                                `json:"created,omitempty"`
 	Status  robotv1alpha1.DiscoveryServerStatus `json:"status,omitempty"`
 }
-
-type FleetPhase string
-
-const (
-	FleetPhaseCreatingNamespace       FleetPhase = "CreatingNamespace"
-	FleetPhaseCreatingDiscoveryServer FleetPhase = "CreatingDiscoveryServer"
-	FleetPhaseReady                   FleetPhase = "Ready"
-)
 
 type FleetCompatibilityStatus struct {
 	IsCompatible bool   `json:"isCompatible"`
@@ -58,6 +52,15 @@ type AttachedRobot struct {
 	Phase              robotv1alpha1.RobotPhase `json:"phase,omitempty"`
 	FleetCompatibility FleetCompatibilityStatus `json:"fleetCompatibility,omitempty"`
 }
+
+type FleetPhase string
+
+const (
+	FleetPhaseCheckingRemoteNamespace FleetPhase = "CheckingRemoteNamespace"
+	FleetPhaseCreatingNamespace       FleetPhase = "CreatingNamespace"
+	FleetPhaseCreatingDiscoveryServer FleetPhase = "CreatingDiscoveryServer"
+	FleetPhaseReady                   FleetPhase = "Ready"
+)
 
 // FleetStatus defines the observed state of Fleet
 type FleetStatus struct {

@@ -38,8 +38,8 @@ type NamespaceStatus struct {
 }
 
 type DiscoveryServerInstanceStatus struct {
-	Created bool                                `json:"created,omitempty"`
-	Status  robotv1alpha1.DiscoveryServerStatus `json:"status,omitempty"`
+	Created bool                               `json:"created,omitempty"`
+	Phase   robotv1alpha1.DiscoveryServerPhase `json:"phase,omitempty"`
 }
 
 type FleetCompatibilityStatus struct {

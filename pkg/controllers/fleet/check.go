@@ -108,7 +108,7 @@ func (r *FleetReconciler) reconcileCheckDiscoveryServer(ctx context.Context, ins
 		return err
 	} else {
 		instance.Status.DiscoveryServerStatus.Created = true
-		instance.Status.DiscoveryServerStatus.Status = discoveryServerQuery.Status
+		instance.Status.DiscoveryServerStatus.Phase = discoveryServerQuery.Status.Phase
 	}
 
 	return nil

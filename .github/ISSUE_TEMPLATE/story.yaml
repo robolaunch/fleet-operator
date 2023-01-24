@@ -8,3 +8,10 @@ body:
       label: "The Story"
     validations:
       required: true
+
+  - type: textarea
+    id: related-story
+    attributes:
+      label: Related Story
+    validations:
+      required: true

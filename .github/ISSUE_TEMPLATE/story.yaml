@@ -15,3 +15,10 @@ body:
       label: Related Story
     validations:
       required: true
+
+  - type: textarea
+    id: parent-story
+    attributes:
+      label: Related Technical Story
+    validations:
+      required: true

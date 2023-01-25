@@ -17,8 +17,8 @@ body:
       required: true
   
   - type: textarea
-    id: related-story
+    id: related-tech-story
     attributes:
-      label: Related Story
+      label: Related Technical Story
     validations:
       required: true

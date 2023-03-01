@@ -1,0 +1,10 @@
+apiVersion: v2
+name: fleet-operator
+description: Helm chart for the robolaunch Fleet Operator
+type: application
+version: 0.1.0
+appVersion: "v0.1.6-alpha.1"
+dependencies:
+- name: "cert-manager"
+  version: "1.8.0"
+  repository: "https://charts.jetstack.io"

@@ -31,15 +31,10 @@ type FleetSpec struct {
 	Instances               []string                          `json:"instances,omitempty"`
 }
 
-type NamespaceStatus struct {
-	Created   bool `json:"created,omitempty"`
-	Federated bool `json:"federated,omitempty"`
-	Ready     bool `json:"ready,omitempty"`
-}
-
-type DiscoveryServerInstanceStatus struct {
-	Created bool                               `json:"created,omitempty"`
-	Phase   robotv1alpha1.DiscoveryServerPhase `json:"phase,omitempty"`
+type OwnedNamespaceStatus struct {
+	Resource  robotv1alpha1.OwnedResourceStatus `json:"resource,omitempty"`
+	Federated bool                              `json:"federated,omitempty"`
+	Ready     bool                              `json:"ready,omitempty"`
 }
 
 type FleetCompatibilityStatus struct {
@@ -64,9 +59,9 @@ const (
 
 // FleetStatus defines the observed state of Fleet
 type FleetStatus struct {
-	Phase                 FleetPhase                    `json:"phase,omitempty"`
-	NamespaceStatus       NamespaceStatus               `json:"namespaceStatus,omitempty"`
-	DiscoveryServerStatus DiscoveryServerInstanceStatus `json:"discoveryServerStatus,omitempty"`
+	Phase                 FleetPhase                        `json:"phase,omitempty"`
+	NamespaceStatus       OwnedNamespaceStatus              `json:"namespaceStatus,omitempty"`
+	DiscoveryServerStatus robotv1alpha1.OwnedResourceStatus `json:"discoveryServerStatus,omitempty"`
 	// Attached launch object information
 	AttachedRobots []AttachedRobot `json:"attachedRobots,omitempty"`
 }

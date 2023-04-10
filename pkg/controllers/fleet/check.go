@@ -7,6 +7,7 @@ import (
 
 	fleetErr "github.com/robolaunch/fleet-operator/internal/error"
 	"github.com/robolaunch/fleet-operator/internal/label"
+	"github.com/robolaunch/fleet-operator/internal/reference"
 	fleetv1alpha1 "github.com/robolaunch/fleet-operator/pkg/api/roboscale.io/v1alpha1"
 	robotv1alpha1 "github.com/robolaunch/robot-operator/pkg/api/roboscale.io/v1alpha1"
 	corev1 "k8s.io/api/core/v1"
@@ -28,11 +29,11 @@ func (r *FleetReconciler) reconcileCheckNamespace(ctx context.Context, instance 
 			namespaceQuery := &corev1.Namespace{}
 			err := r.Get(ctx, *instance.GetNamespaceMetadata(), namespaceQuery)
 			if err != nil && errors.IsNotFound(err) {
-				instance.Status.NamespaceStatus = fleetv1alpha1.NamespaceStatus{}
+				instance.Status.NamespaceStatus = fleetv1alpha1.OwnedNamespaceStatus{}
 			} else if err != nil {
 				return err
 			} else {
-				instance.Status.NamespaceStatus.Created = true
+				instance.Status.NamespaceStatus.Resource.Created = true
 
 				// check federated ns
 				resourceInterface := r.DynamicClient.Resource(schema.GroupVersionResource{
@@ -59,11 +60,11 @@ func (r *FleetReconciler) reconcileCheckNamespace(ctx context.Context, instance 
 		namespaceQuery := &corev1.Namespace{}
 		err := r.Get(ctx, *instance.GetNamespaceMetadata(), namespaceQuery)
 		if err != nil && errors.IsNotFound(err) {
-			instance.Status.NamespaceStatus = fleetv1alpha1.NamespaceStatus{}
+			instance.Status.NamespaceStatus = fleetv1alpha1.OwnedNamespaceStatus{}
 		} else if err != nil {
 			return err
 		} else {
-			instance.Status.NamespaceStatus.Created = true
+			instance.Status.NamespaceStatus.Resource.Created = true
 			instance.Status.NamespaceStatus.Ready = true
 		}
 
@@ -77,7 +78,7 @@ func (r *FleetReconciler) reconcileCheckRemoteNamespace(ctx context.Context, ins
 	namespaceQuery := &corev1.Namespace{}
 	err := r.Get(ctx, *instance.GetNamespaceMetadata(), namespaceQuery)
 	if err != nil && errors.IsNotFound(err) {
-		instance.Status.NamespaceStatus = fleetv1alpha1.NamespaceStatus{}
+		instance.Status.NamespaceStatus = fleetv1alpha1.OwnedNamespaceStatus{}
 		instance.Status.Phase = fleetv1alpha1.FleetPhaseCheckingRemoteNamespace
 
 		err := r.reconcileUpdateInstanceStatus(ctx, instance)
@@ -94,6 +95,7 @@ func (r *FleetReconciler) reconcileCheckRemoteNamespace(ctx context.Context, ins
 		return err
 	} else {
 		instance.Status.NamespaceStatus.Ready = true
+		reference.SetReference(&instance.Status.NamespaceStatus.Resource.Reference, namespaceQuery.TypeMeta, namespaceQuery.ObjectMeta)
 	}
 
 	return nil
@@ -104,12 +106,13 @@ func (r *FleetReconciler) reconcileCheckDiscoveryServer(ctx context.Context, ins
 	discoveryServerQuery := &robotv1alpha1.DiscoveryServer{}
 	err := r.Get(ctx, *instance.GetDiscoveryServerMetadata(), discoveryServerQuery)
 	if err != nil && errors.IsNotFound(err) {
-		instance.Status.DiscoveryServerStatus = fleetv1alpha1.DiscoveryServerInstanceStatus{}
+		instance.Status.DiscoveryServerStatus = robotv1alpha1.OwnedResourceStatus{}
 	} else if err != nil {
 		return err
 	} else {
 		instance.Status.DiscoveryServerStatus.Created = true
-		instance.Status.DiscoveryServerStatus.Phase = discoveryServerQuery.Status.Phase
+		instance.Status.DiscoveryServerStatus.Phase = string(discoveryServerQuery.Status.Phase)
+		reference.SetReference(&instance.Status.DiscoveryServerStatus.Reference, discoveryServerQuery.TypeMeta, discoveryServerQuery.ObjectMeta)
 	}
 
 	return nil

@@ -146,7 +146,7 @@ func (r *FleetReconciler) reconcileCheckStatus(ctx context.Context, instance *fl
 			switch label.GetInstanceType(instance) {
 			case label.InstanceTypeCloudInstance:
 
-				switch instance.Status.NamespaceStatus.Created {
+				switch instance.Status.NamespaceStatus.Resource.Created {
 				case true:
 
 					switch instance.Status.NamespaceStatus.Federated {
@@ -169,7 +169,7 @@ func (r *FleetReconciler) reconcileCheckStatus(ctx context.Context, instance *fl
 					if err != nil {
 						return err
 					}
-					instance.Status.NamespaceStatus.Created = true
+					instance.Status.NamespaceStatus.Resource.Created = true
 
 				}
 
@@ -186,7 +186,7 @@ func (r *FleetReconciler) reconcileCheckStatus(ctx context.Context, instance *fl
 			if err != nil {
 				return err
 			}
-			instance.Status.NamespaceStatus.Created = true
+			instance.Status.NamespaceStatus.Resource.Created = true
 			instance.Status.NamespaceStatus.Ready = true
 
 		}

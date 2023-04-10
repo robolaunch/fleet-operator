@@ -28,11 +28,11 @@ func (r *FleetReconciler) reconcileCheckNamespace(ctx context.Context, instance 
 			namespaceQuery := &corev1.Namespace{}
 			err := r.Get(ctx, *instance.GetNamespaceMetadata(), namespaceQuery)
 			if err != nil && errors.IsNotFound(err) {
-				instance.Status.NamespaceStatus = fleetv1alpha1.NamespaceStatus{}
+				instance.Status.NamespaceStatus = fleetv1alpha1.OwnedNamespaceStatus{}
 			} else if err != nil {
 				return err
 			} else {
-				instance.Status.NamespaceStatus.Created = true
+				instance.Status.NamespaceStatus.Resource.Created = true
 
 				// check federated ns
 				resourceInterface := r.DynamicClient.Resource(schema.GroupVersionResource{
@@ -59,11 +59,11 @@ func (r *FleetReconciler) reconcileCheckNamespace(ctx context.Context, instance 
 		namespaceQuery := &corev1.Namespace{}
 		err := r.Get(ctx, *instance.GetNamespaceMetadata(), namespaceQuery)
 		if err != nil && errors.IsNotFound(err) {
-			instance.Status.NamespaceStatus = fleetv1alpha1.NamespaceStatus{}
+			instance.Status.NamespaceStatus = fleetv1alpha1.OwnedNamespaceStatus{}
 		} else if err != nil {
 			return err
 		} else {
-			instance.Status.NamespaceStatus.Created = true
+			instance.Status.NamespaceStatus.Resource.Created = true
 			instance.Status.NamespaceStatus.Ready = true
 		}
 
@@ -77,7 +77,7 @@ func (r *FleetReconciler) reconcileCheckRemoteNamespace(ctx context.Context, ins
 	namespaceQuery := &corev1.Namespace{}
 	err := r.Get(ctx, *instance.GetNamespaceMetadata(), namespaceQuery)
 	if err != nil && errors.IsNotFound(err) {
-		instance.Status.NamespaceStatus = fleetv1alpha1.NamespaceStatus{}
+		instance.Status.NamespaceStatus = fleetv1alpha1.OwnedNamespaceStatus{}
 		instance.Status.Phase = fleetv1alpha1.FleetPhaseCheckingRemoteNamespace
 
 		err := r.reconcileUpdateInstanceStatus(ctx, instance)

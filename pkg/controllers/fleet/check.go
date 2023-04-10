@@ -7,6 +7,7 @@ import (
 
 	fleetErr "github.com/robolaunch/fleet-operator/internal/error"
 	"github.com/robolaunch/fleet-operator/internal/label"
+	"github.com/robolaunch/fleet-operator/internal/reference"
 	fleetv1alpha1 "github.com/robolaunch/fleet-operator/pkg/api/roboscale.io/v1alpha1"
 	robotv1alpha1 "github.com/robolaunch/robot-operator/pkg/api/roboscale.io/v1alpha1"
 	corev1 "k8s.io/api/core/v1"
@@ -94,6 +95,7 @@ func (r *FleetReconciler) reconcileCheckRemoteNamespace(ctx context.Context, ins
 		return err
 	} else {
 		instance.Status.NamespaceStatus.Ready = true
+		reference.SetReference(&instance.Status.NamespaceStatus.Resource.Reference, namespaceQuery.TypeMeta, namespaceQuery.ObjectMeta)
 	}
 
 	return nil
@@ -110,6 +112,7 @@ func (r *FleetReconciler) reconcileCheckDiscoveryServer(ctx context.Context, ins
 	} else {
 		instance.Status.DiscoveryServerStatus.Created = true
 		instance.Status.DiscoveryServerStatus.Phase = string(discoveryServerQuery.Status.Phase)
+		reference.SetReference(&instance.Status.DiscoveryServerStatus.Reference, discoveryServerQuery.TypeMeta, discoveryServerQuery.ObjectMeta)
 	}
 
 	return nil

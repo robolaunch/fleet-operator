@@ -116,7 +116,7 @@ func (r *FleetReconciler) reconcileCheckStatus(ctx context.Context, instance *fl
 		case true:
 
 			switch instance.Status.DiscoveryServerStatus.Phase {
-			case robotv1alpha1.DiscoveryServerPhaseReady:
+			case string(robotv1alpha1.DiscoveryServerPhaseReady):
 
 				instance.Status.Phase = fleetv1alpha1.FleetPhaseReady
 

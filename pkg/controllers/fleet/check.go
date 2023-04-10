@@ -104,12 +104,12 @@ func (r *FleetReconciler) reconcileCheckDiscoveryServer(ctx context.Context, ins
 	discoveryServerQuery := &robotv1alpha1.DiscoveryServer{}
 	err := r.Get(ctx, *instance.GetDiscoveryServerMetadata(), discoveryServerQuery)
 	if err != nil && errors.IsNotFound(err) {
-		instance.Status.DiscoveryServerStatus = fleetv1alpha1.DiscoveryServerInstanceStatus{}
+		instance.Status.DiscoveryServerStatus = robotv1alpha1.OwnedResourceStatus{}
 	} else if err != nil {
 		return err
 	} else {
 		instance.Status.DiscoveryServerStatus.Created = true
-		instance.Status.DiscoveryServerStatus.Phase = discoveryServerQuery.Status.Phase
+		instance.Status.DiscoveryServerStatus.Phase = string(discoveryServerQuery.Status.Phase)
 	}
 
 	return nil

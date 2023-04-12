@@ -1,0 +1,8 @@
+processor:
+  ignoreTypes:
+    - "FleetList"
+  ignoreFields:
+    - "TypeMeta$"
+
+render:
+  kubernetesVersion: 1.26

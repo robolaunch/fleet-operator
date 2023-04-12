@@ -24,27 +24,37 @@ import (
 	"k8s.io/apimachinery/pkg/types"
 )
 
-// FleetSpec defines the desired state of Fleet
 type FleetSpec struct {
+	// Discovery server configuration of fleet. For detailed information, refer the document for the API group `robot.roboscale.io`.
 	DiscoveryServerTemplate robotv1alpha1.DiscoveryServerSpec `json:"discoveryServerTemplate,omitempty"`
-	Hybrid                  bool                              `json:"hybrid,omitempty"`
-	Instances               []string                          `json:"instances,omitempty"`
+	// Determines if the fleet should be federated across clusters or not.
+	Hybrid bool `json:"hybrid,omitempty"`
+	// If `.spec.hybrid` is true, this field includes Kubernetes cluster names which the fleet will be federated to.
+	Instances []string `json:"instances,omitempty"`
 }
 
 type OwnedNamespaceStatus struct {
-	Resource  robotv1alpha1.OwnedResourceStatus `json:"resource,omitempty"`
-	Federated bool                              `json:"federated,omitempty"`
-	Ready     bool                              `json:"ready,omitempty"`
+	// Generic structure of the most recent status of an owned object. For detailed information, refer the document for the API group `robot.roboscale.io`.
+	Resource robotv1alpha1.OwnedResourceStatus `json:"resource,omitempty"`
+	// Sets to `true` if the owned namespace is federated.
+	Federated bool `json:"federated,omitempty"`
+	// Sets to `true` if the namespace is ready for the resources to be deployed such as robot.
+	Ready bool `json:"ready,omitempty"`
 }
 
 type FleetCompatibilityStatus struct {
-	IsCompatible bool   `json:"isCompatible"`
-	Reason       string `json:"reason,omitempty"`
+	// Indicates the robot's compatibility with fleet.
+	IsCompatible bool `json:"isCompatible"`
+	// Indicates the possible incompatibility reason of an attached robot.
+	Reason string `json:"reason,omitempty"`
 }
 
 type AttachedRobot struct {
-	Reference          corev1.ObjectReference   `json:"reference,omitempty"`
-	Phase              robotv1alpha1.RobotPhase `json:"phase,omitempty"`
+	// Resource reference for attached robot.
+	Reference corev1.ObjectReference `json:"reference,omitempty"`
+	// Attached robot phase. For detailed information, refer the document for the API group `robot.roboscale.io`.
+	Phase robotv1alpha1.RobotPhase `json:"phase,omitempty"`
+	// Compatibility status of attached robot with the fleet.
 	FleetCompatibility FleetCompatibilityStatus `json:"fleetCompatibility,omitempty"`
 }
 
@@ -57,12 +67,14 @@ const (
 	FleetPhaseReady                   FleetPhase = "Ready"
 )
 
-// FleetStatus defines the observed state of Fleet
 type FleetStatus struct {
-	Phase                 FleetPhase                        `json:"phase,omitempty"`
-	NamespaceStatus       OwnedNamespaceStatus              `json:"namespaceStatus,omitempty"`
+	// Fleet phase.
+	Phase FleetPhase `json:"phase,omitempty"`
+	// Namespace status. Fleet creates namespace if the `.spec.hybrid` is set to `true`. It creates `FederatedNamespace` if `false`.
+	NamespaceStatus OwnedNamespaceStatus `json:"namespaceStatus,omitempty"`
+	// Discovery server instance status. For detailed information, refer the document for the API group `robot.roboscale.io`.
 	DiscoveryServerStatus robotv1alpha1.OwnedResourceStatus `json:"discoveryServerStatus,omitempty"`
-	// Attached launch object information
+	// Attached launch object information.
 	AttachedRobots []AttachedRobot `json:"attachedRobots,omitempty"`
 }
 
@@ -70,18 +82,20 @@ type FleetStatus struct {
 //+kubebuilder:object:root=true
 //+kubebuilder:subresource:status
 
-// Fleet is the Schema for the fleets API
+// Fleet manages lifecycle and configuration of multiple robots and robot's connectivity layer that contains DDS Discovery Server and ROS bridge services.
 type Fleet struct {
-	metav1.TypeMeta   `json:",inline"`
+	metav1.TypeMeta `json:",inline"`
+	// Standard object's metadata.
 	metav1.ObjectMeta `json:"metadata,omitempty"`
-
-	Spec   FleetSpec   `json:"spec,omitempty"`
+	// Specification of the desired behavior of the Fleet.
+	Spec FleetSpec `json:"spec,omitempty"`
+	// Most recently observed status of the Deployment.
 	Status FleetStatus `json:"status,omitempty"`
 }
 
 //+kubebuilder:object:root=true
 
-// FleetList contains a list of Fleet
+// FleetList contains a list of Fleet.
 type FleetList struct {
 	metav1.TypeMeta `json:",inline"`
 	metav1.ListMeta `json:"metadata,omitempty"`

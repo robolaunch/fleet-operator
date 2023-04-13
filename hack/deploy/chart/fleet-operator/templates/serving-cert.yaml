@@ -1,0 +1,16 @@
+apiVersion: cert-manager.io/v1
+kind: Certificate
+metadata:
+  name: {{ include "fleet-operator.fullname" . }}-serving-cert
+  labels:
+  {{- include "fleet-operator.labels" . | nindent 4 }}
+spec:
+  dnsNames:
+  - '{{ include "fleet-operator.fullname" . }}-webhook-service.{{ .Release.Namespace
+    }}.svc'
+  - '{{ include "fleet-operator.fullname" . }}-webhook-service.{{ .Release.Namespace
+    }}.svc.{{ .Values.kubernetesClusterDomain }}'
+  issuerRef:
+    kind: Issuer
+    name: '{{ include "fleet-operator.fullname" . }}-selfsigned-issuer'
+  secretName: webhook-server-cert

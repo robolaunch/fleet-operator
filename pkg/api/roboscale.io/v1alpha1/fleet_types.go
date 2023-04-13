@@ -89,7 +89,7 @@ type Fleet struct {
 	metav1.ObjectMeta `json:"metadata,omitempty"`
 	// Specification of the desired behavior of the Fleet.
 	Spec FleetSpec `json:"spec,omitempty"`
-	// Most recently observed status of the Deployment.
+	// Most recently observed status of the Fleet.
 	Status FleetStatus `json:"status,omitempty"`
 }
 

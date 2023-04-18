@@ -9,6 +9,8 @@ MANIFEST_LOCATION = hack/deploy/manifests
 LOCAL_MANIFEST_LOCATION = hack/deploy.local/manifests
 # Release version
 RELEASE ?= v0.1.0
+# Chart version
+CHART_VERSION ?= v0.1.0
 
 # Get the currently used golang install path (in GOPATH/bin, unless GOBIN is set)
 ifeq (,$(shell go env GOBIN))

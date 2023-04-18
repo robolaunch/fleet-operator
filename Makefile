@@ -193,5 +193,9 @@ $(HELMIFY): $(LOCALBIN)
 	test -s $(LOCALBIN)/helmify || GOBIN=$(LOCALBIN) go install github.com/arttor/helmify/cmd/helmify@latest
     
 helm: manifests kustomize helmify
+	$(KUSTOMIZE) build config/default | $(HELMIFY) hack/deploy.local/chart/fleet-operator
+	yq e -i '.appVersion = "${RELEASE}"' hack/deploy.local/chart/fleet-operator/Chart.yaml
+  
+gh-helm: manifests kustomize helmify
 	$(KUSTOMIZE) build config/default | $(HELMIFY) hack/deploy/chart/fleet-operator
 	yq e -i '.appVersion = "${RELEASE}"' hack/deploy/chart/fleet-operator/Chart.yaml

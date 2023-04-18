@@ -54,41 +54,27 @@ spec:
                   refer the document for the API group `robot.roboscale.io`.
                 properties:
                   args:
+                    description: Entrypoint of the DiscoveryServer. Applied if the instance
+                      type is `Server`.
                     items:
                       type: string
                     type: array
                   cluster:
+                    description: Cloud instance name that holds DiscoveryServer instance
+                      with `Server` type.
                     type: string
                   hostname:
+                    description: If instance type is `Server`, it can be an arbitrary
+                      value. If instance type is `Client`, it should be the same with
+                      Server's hostname. Used for getting Server's IP over DNS.
                     type: string
                   image:
+                    description: Image for discovery server. Recommended to use images
+                      which has configured ROS 2.
                     type: string
                   reference:
-                    description: "ObjectReference contains enough information to let
-                      you inspect or modify the referred object. --- New uses of this
-                      type are discouraged because of difficulty describing its usage
-                      when embedded in APIs. 1. Ignored fields.  It includes many fields
-                      which are not generally honored.  For instance, ResourceVersion
-                      and FieldPath are both very rarely valid in actual usage. 2. Invalid
-                      usage help.  It is impossible to add specific help for individual
-                      usage.  In most embedded usages, there are particular restrictions
-                      like, \"must refer only to types A and B\" or \"UID not honored\"
-                      or \"name must be restricted\". Those cannot be well described
-                      when embedded. 3. Inconsistent validation.  Because the usages
-                      are different, the validation rules are different by usage, which
-                      makes it hard for users to predict what will happen. 4. The fields
-                      are both imprecise and overly precise.  Kind is not a precise
-                      mapping to a URL. This can produce ambiguity during interpretation
-                      and require a REST mapping.  In most cases, the dependency is
-                      on the group,resource tuple and the version of the actual struct
-                      is irrelevant. 5. We cannot easily change it.  Because this type
-                      is embedded in many locations, updates to this type will affect
-                      numerous schemas.  Don't make new APIs embed an underspecified
-                      API type they do not control. \n Instead of using this type, create
-                      a locally provided and used type that is well-focused on your
-                      reference. For example, ServiceReferences for admission registration:
-                      https://github.com/kubernetes/api/blob/release-1.17/admissionregistration/v1/types.go#L533
-                      ."
+                    description: Reference to the `Server` instance. It is used if `.spec.type`
+                      is `Client`. Referenced object can be provisioned in another cluster.
                     properties:
                       apiVersion:
                         description: API version of the referent.
@@ -125,8 +111,16 @@ spec:
                     type: object
                     x-kubernetes-map-type: atomic
                   subdomain:
+                    description: If instance type is `Server`, it can be an arbitrary
+                      value. If instance type is `Client`, it should be the same with
+                      Server's subdomain. Used for getting Server's IP over DNS.
                     type: string
                   type:
+                    description: Instance type can be either `Server` or `Client`. If
+                      `Server`, instance creates discovery server resources and workloads.
+                      Other `Client` instances can connect to the `Server` instance.
+                      If `Client`, instance tries to connect a `Server` instance and
+                      hold `Server` configuration in a ConfigMap.
                     type: string
                 type: object
               hybrid:
@@ -208,35 +202,13 @@ spec:
                   refer the document for the API group `robot.roboscale.io`.
                 properties:
                   created:
+                    description: Shows if the owned resource is created.
                     type: boolean
                   phase:
+                    description: Phase of the owned resource.
                     type: string
                   reference:
-                    description: "ObjectReference contains enough information to let
-                      you inspect or modify the referred object. --- New uses of this
-                      type are discouraged because of difficulty describing its usage
-                      when embedded in APIs. 1. Ignored fields.  It includes many fields
-                      which are not generally honored.  For instance, ResourceVersion
-                      and FieldPath are both very rarely valid in actual usage. 2. Invalid
-                      usage help.  It is impossible to add specific help for individual
-                      usage.  In most embedded usages, there are particular restrictions
-                      like, \"must refer only to types A and B\" or \"UID not honored\"
-                      or \"name must be restricted\". Those cannot be well described
-                      when embedded. 3. Inconsistent validation.  Because the usages
-                      are different, the validation rules are different by usage, which
-                      makes it hard for users to predict what will happen. 4. The fields
-                      are both imprecise and overly precise.  Kind is not a precise
-                      mapping to a URL. This can produce ambiguity during interpretation
-                      and require a REST mapping.  In most cases, the dependency is
-                      on the group,resource tuple and the version of the actual struct
-                      is irrelevant. 5. We cannot easily change it.  Because this type
-                      is embedded in many locations, updates to this type will affect
-                      numerous schemas.  Don't make new APIs embed an underspecified
-                      API type they do not control. \n Instead of using this type, create
-                      a locally provided and used type that is well-focused on your
-                      reference. For example, ServiceReferences for admission registration:
-                      https://github.com/kubernetes/api/blob/release-1.17/admissionregistration/v1/types.go#L533
-                      ."
+                    description: Reference to the owned resource.
                     properties:
                       apiVersion:
                         description: API version of the referent.
@@ -292,36 +264,13 @@ spec:
                       group `robot.roboscale.io`.
                     properties:
                       created:
+                        description: Shows if the owned resource is created.
                         type: boolean
                       phase:
+                        description: Phase of the owned resource.
                         type: string
                       reference:
-                        description: "ObjectReference contains enough information to
-                          let you inspect or modify the referred object. --- New uses
-                          of this type are discouraged because of difficulty describing
-                          its usage when embedded in APIs. 1. Ignored fields.  It includes
-                          many fields which are not generally honored.  For instance,
-                          ResourceVersion and FieldPath are both very rarely valid in
-                          actual usage. 2. Invalid usage help.  It is impossible to
-                          add specific help for individual usage.  In most embedded
-                          usages, there are particular restrictions like, \"must refer
-                          only to types A and B\" or \"UID not honored\" or \"name must
-                          be restricted\". Those cannot be well described when embedded.
-                          3. Inconsistent validation.  Because the usages are different,
-                          the validation rules are different by usage, which makes it
-                          hard for users to predict what will happen. 4. The fields
-                          are both imprecise and overly precise.  Kind is not a precise
-                          mapping to a URL. This can produce ambiguity during interpretation
-                          and require a REST mapping.  In most cases, the dependency
-                          is on the group,resource tuple and the version of the actual
-                          struct is irrelevant. 5. We cannot easily change it.  Because
-                          this type is embedded in many locations, updates to this type
-                          will affect numerous schemas.  Don't make new APIs embed an
-                          underspecified API type they do not control. \n Instead of
-                          using this type, create a locally provided and used type that
-                          is well-focused on your reference. For example, ServiceReferences
-                          for admission registration: https://github.com/kubernetes/api/blob/release-1.17/admissionregistration/v1/types.go#L533
-                          ."
+                        description: Reference to the owned resource.
                         properties:
                           apiVersion:
                             description: API version of the referent.

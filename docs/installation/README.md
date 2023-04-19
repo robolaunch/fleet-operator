@@ -53,13 +53,6 @@ helm upgrade -i fleet-operator robolaunch/fleet-operator  \
 --version $VERSION
 ```
 
-To uninstall Fleet Operator installed with Helm, run the following commands:
-
-```bash
-helm delete fleet-operator -n fleet-system
-kubectl delete ns fleet-system
-```
-
 ### via Manifest
 
 Deploy Fleet Operator one-file YAML using the command below:
@@ -68,6 +61,15 @@ Deploy Fleet Operator one-file YAML using the command below:
 # select a tag
 TAG="v0.1.6-alpha.5"
 kubectl apply -f https://raw.githubusercontent.com/robolaunch/fleet-operator/$TAG/hack/deploy/manifests/fleet_operator.yaml
+```
+
+## Uninstalling Fleet Operator
+
+To uninstall Fleet Operator installed with Helm, run the following commands:
+
+```bash
+helm delete fleet-operator -n fleet-system
+kubectl delete ns fleet-system
 ```
 
 To uninstall Fleet Operator installed with one-file YAML, run the following commands:

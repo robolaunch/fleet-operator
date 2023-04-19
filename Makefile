@@ -195,11 +195,11 @@ $(HELMIFY): $(LOCALBIN)
 helm: manifests kustomize helmify
 	rm -rf hack/deploy.local/chart/fleet-operator
 	$(KUSTOMIZE) build config/default | $(HELMIFY) hack/deploy.local/chart/fleet-operator
-	yq e -i '.appVersion = "${RELEASE}"' hack/deploy.local/chart/fleet-operator/Chart.yaml
+	yq e -i '.appVersion = "v${RELEASE}"' hack/deploy.local/chart/fleet-operator/Chart.yaml
 	yq e -i '.version = "${RELEASE}"' hack/deploy.local/chart/fleet-operator/Chart.yaml
   
 gh-helm: manifests kustomize helmify
 	rm -rf hack/deploy/chart/fleet-operator
 	$(KUSTOMIZE) build config/default | $(HELMIFY) hack/deploy/chart/fleet-operator
-	yq e -i '.appVersion = "${RELEASE}"' hack/deploy/chart/fleet-operator/Chart.yaml
+	yq e -i '.appVersion = "v${RELEASE}"' hack/deploy/chart/fleet-operator/Chart.yaml
 	yq e -i '.version = "${RELEASE}"' hack/deploy/chart/fleet-operator/Chart.yaml

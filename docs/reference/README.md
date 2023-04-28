@@ -24,7 +24,7 @@ Fleet manages lifecycle and configuration of multiple robots and robot's connect
 | `kind` _string_ | `Fleet`
 | `metadata` _[ObjectMeta](https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.26/#objectmeta-v1-meta)_ | Refer to Kubernetes API documentation for fields of `metadata`. |
 | `spec` _[FleetSpec](#fleetspec)_ | Specification of the desired behavior of the Fleet. |
-| `status` _[FleetStatus](#fleetstatus)_ | Most recently observed status of the Deployment. |
+| `status` _[FleetStatus](#fleetstatus)_ | Most recently observed status of the Fleet. |
 
 
 #### FleetSpec

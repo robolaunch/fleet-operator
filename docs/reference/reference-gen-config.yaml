@@ -1,6 +1,8 @@
 processor:
   ignoreTypes:
-    - "FleetList"
+    - "List$"
+  sortKinds:
+    - "Fleet"
   ignoreFields:
     - "TypeMeta$"
 

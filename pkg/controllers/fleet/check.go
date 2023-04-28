@@ -12,7 +12,8 @@ import (
 	robotv1alpha1 "github.com/robolaunch/robot-operator/pkg/api/roboscale.io/v1alpha1"
 	corev1 "k8s.io/api/core/v1"
 	"k8s.io/apimachinery/pkg/api/errors"
-	v1 "k8s.io/apimachinery/pkg/apis/meta/v1"
+	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
+	"k8s.io/apimachinery/pkg/apis/meta/v1/unstructured"
 	"k8s.io/apimachinery/pkg/runtime/schema"
 	"k8s.io/apimachinery/pkg/types"
 )
@@ -45,10 +46,32 @@ func (r *FleetReconciler) reconcileCheckNamespace(ctx context.Context, instance 
 				instance.Status.NamespaceStatus.Federated = true
 				instance.Status.NamespaceStatus.Ready = true
 
-				_, err = resourceInterface.Namespace(instance.GetNamespaceMetadata().Name).Get(ctx, instance.GetNamespaceMetadata().Name, v1.GetOptions{})
+				unstructuredFedNs, err := resourceInterface.Namespace(instance.GetNamespaceMetadata().Name).Get(ctx, instance.GetNamespaceMetadata().Name, metav1.GetOptions{})
 				if err != nil {
 					instance.Status.NamespaceStatus.Federated = false
 					instance.Status.NamespaceStatus.Ready = false
+					return nil
+				}
+
+				desiredInstancesMapSlice := []map[string]interface{}{}
+				for _, i := range instance.Spec.Instances {
+					desiredInstancesMapSlice = append(desiredInstancesMapSlice, map[string]interface{}{
+						"name": i,
+					})
+				}
+
+				actualInstancesMapSlice := []map[string]interface{}{}
+				actualInstancesInterface := unstructuredFedNs.Object["spec"].(map[string]interface{})["placement"].(map[string]interface{})["clusters"].([]interface{})
+				for _, v := range actualInstancesInterface {
+					actualInstancesMapSlice = append(actualInstancesMapSlice, v.(map[string]interface{}))
+				}
+
+				if !reflect.DeepEqual(desiredInstancesMapSlice, actualInstancesMapSlice) {
+					err := r.updateFederatedNamespace(ctx, instance, instance.GetNamespaceMetadata(), unstructuredFedNs)
+					if err != nil {
+						logger.Info("UPDATE: Updating FederatedNamespace.")
+						return err
+					}
 				}
 
 			}
@@ -68,6 +91,41 @@ func (r *FleetReconciler) reconcileCheckNamespace(ctx context.Context, instance 
 			instance.Status.NamespaceStatus.Ready = true
 		}
 
+	}
+
+	return nil
+}
+
+func (r *FleetReconciler) updateFederatedNamespace(ctx context.Context, instance *fleetv1alpha1.Fleet, nsNamespacedName *types.NamespacedName, federatedNs *unstructured.Unstructured) error {
+
+	resourceInterface := r.DynamicClient.Resource(schema.GroupVersionResource{
+		Group:    "types.kubefed.io",
+		Version:  "v1beta1",
+		Resource: "federatednamespaces",
+	})
+
+	instancesMapSlice := []map[string]interface{}{}
+	for _, i := range instance.Spec.Instances {
+		instancesMapSlice = append(instancesMapSlice, map[string]interface{}{
+			"name": i,
+		})
+	}
+
+	desiredFederatedNamespace := unstructured.Unstructured{
+		Object: map[string]interface{}{
+			"spec": map[string]interface{}{
+				"placement": map[string]interface{}{
+					"clusters": instancesMapSlice,
+				},
+			},
+		},
+	}
+
+	federatedNs.Object["spec"] = desiredFederatedNamespace.Object["spec"]
+
+	_, err := resourceInterface.Namespace(nsNamespacedName.Name).Update(ctx, federatedNs, metav1.UpdateOptions{})
+	if err != nil {
+		return err
 	}
 
 	return nil

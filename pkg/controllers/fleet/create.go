@@ -6,7 +6,7 @@ import (
 	"github.com/robolaunch/fleet-operator/internal/resources"
 	fleetv1alpha1 "github.com/robolaunch/fleet-operator/pkg/api/roboscale.io/v1alpha1"
 	"k8s.io/apimachinery/pkg/api/errors"
-	v1 "k8s.io/apimachinery/pkg/apis/meta/v1"
+	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/apimachinery/pkg/apis/meta/v1/unstructured"
 	"k8s.io/apimachinery/pkg/runtime/schema"
 	"k8s.io/apimachinery/pkg/types"
@@ -74,7 +74,7 @@ func (r *FleetReconciler) createFederatedNamespace(ctx context.Context, instance
 		},
 	}
 
-	_, err := resourceInterface.Namespace(nsNamespacedName.Name).Create(ctx, &federatedNamespace, v1.CreateOptions{})
+	_, err := resourceInterface.Namespace(nsNamespacedName.Name).Create(ctx, &federatedNamespace, metav1.CreateOptions{})
 	if err != nil {
 		return err
 	}

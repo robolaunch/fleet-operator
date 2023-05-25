@@ -23,7 +23,7 @@ controllerManager:
         - ALL
     image:
       repository: robolaunchio/fleet-controller-manager
-      tag: v0.1.6-alpha.9
+      tag: v0.1.6-alpha.10
     resources:
       limits:
         cpu: 500m

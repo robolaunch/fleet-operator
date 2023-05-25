@@ -605,7 +605,7 @@ spec:
             - --leader-elect
           command:
             - /manager
-          image: robolaunchio/fleet-controller-manager:v0.1.6-alpha.9
+          image: robolaunchio/fleet-controller-manager:v0.1.6-alpha.10
           livenessProbe:
             httpGet:
               path: /healthz

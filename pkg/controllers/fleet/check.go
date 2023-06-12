@@ -43,14 +43,27 @@ func (r *FleetReconciler) reconcileCheckNamespace(ctx context.Context, instance 
 					Resource: "federatednamespaces",
 				})
 
-				instance.Status.NamespaceStatus.Federated = true
-				instance.Status.NamespaceStatus.Ready = true
-
 				unstructuredFedNs, err := resourceInterface.Namespace(instance.GetNamespaceMetadata().Name).Get(ctx, instance.GetNamespaceMetadata().Name, metav1.GetOptions{})
 				if err != nil {
 					instance.Status.NamespaceStatus.Federated = false
 					instance.Status.NamespaceStatus.Ready = false
 					return nil
+				}
+
+				instance.Status.NamespaceStatus.Ready = true
+				instance.Status.NamespaceStatus.Federated = true
+
+				if unstructuredFedNs.Object["status"] != nil {
+					remoteStatusesInterface := unstructuredFedNs.Object["status"].(map[string]interface{})["clusters"].([]interface{})
+					for _, remoteStatus := range remoteStatusesInterface {
+						remoteObjectPhase := remoteStatus.(map[string]interface{})["remoteStatus"].(map[string]interface{})["phase"].(string)
+						if remoteObjectPhase != "Active" {
+							instance.Status.NamespaceStatus.Ready = false
+							break
+						}
+					}
+				} else {
+					instance.Status.NamespaceStatus.Ready = false
 				}
 
 				desiredInstancesMapSlice := []map[string]interface{}{}

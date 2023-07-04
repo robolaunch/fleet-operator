@@ -63,6 +63,7 @@ type FleetPhase string
 const (
 	FleetPhaseCheckingRemoteNamespace FleetPhase = "CheckingRemoteNamespace"
 	FleetPhaseCreatingNamespace       FleetPhase = "CreatingNamespace"
+	FleetPhaseFederatingNamespace     FleetPhase = "FederatingNamespace"
 	FleetPhaseCreatingDiscoveryServer FleetPhase = "CreatingDiscoveryServer"
 	FleetPhaseReady                   FleetPhase = "Ready"
 )

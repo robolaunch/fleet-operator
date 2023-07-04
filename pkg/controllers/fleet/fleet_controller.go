@@ -150,15 +150,18 @@ func (r *FleetReconciler) reconcileCheckStatus(ctx context.Context, instance *fl
 				case true:
 
 					switch instance.Status.NamespaceStatus.Federated {
+					case true:
+
+						instance.Status.NamespaceStatus.Ready = true
+
 					case false:
 
-						instance.Status.Phase = fleetv1alpha1.FleetPhaseCreatingNamespace
+						instance.Status.Phase = fleetv1alpha1.FleetPhaseFederatingNamespace
 						err := r.createFederatedNamespace(ctx, instance, instance.GetNamespaceMetadata())
 						if err != nil {
 							return err
 						}
 						instance.Status.NamespaceStatus.Federated = true
-						instance.Status.NamespaceStatus.Ready = true
 
 					}
 

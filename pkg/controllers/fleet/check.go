@@ -56,10 +56,12 @@ func (r *FleetReconciler) reconcileCheckNamespace(ctx context.Context, instance 
 				if unstructuredFedNs.Object["status"] != nil {
 					remoteStatusesInterface := unstructuredFedNs.Object["status"].(map[string]interface{})["clusters"].([]interface{})
 					for _, remoteStatus := range remoteStatusesInterface {
-						remoteObjectPhase := remoteStatus.(map[string]interface{})["remoteStatus"].(map[string]interface{})["phase"].(string)
-						if remoteObjectPhase != "Active" {
-							instance.Status.NamespaceStatus.Ready = false
-							break
+						if rs, ok := remoteStatus.(map[string]interface{})["remoteStatus"]; ok {
+							remoteObjectPhase := rs.(map[string]interface{})["phase"].(string)
+							if remoteObjectPhase != "Active" {
+								instance.Status.NamespaceStatus.Ready = false
+								break
+							}
 						}
 					}
 				} else {

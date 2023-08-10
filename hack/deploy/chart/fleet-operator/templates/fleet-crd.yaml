@@ -60,7 +60,6 @@ spec:
                       the type is `Client`.
                     type: string
                   domainID:
-                    default: 0
                     description: ROS domain ID for robot. See https://docs.ros.org/en/foxy/Concepts/About-Domain-ID.html.
                     maximum: 101
                     minimum: 0

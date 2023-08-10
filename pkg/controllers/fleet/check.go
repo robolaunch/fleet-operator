@@ -230,7 +230,7 @@ func (r *FleetReconciler) reconcileCheckAttachedRobots(ctx context.Context, inst
 func checkRobotDiscovery(fleet fleetv1alpha1.Fleet, robot robotv1alpha1.Robot) error {
 
 	fleetDsConfig := fleet.Spec.DiscoveryServerTemplate
-	robotDsConfig := robot.Spec.DiscoveryServerTemplate
+	robotDsConfig := robot.Spec.RobotConfig.DiscoveryServerTemplate
 
 	if robotDsConfig.Type == robotv1alpha1.DiscoveryServerInstanceTypeServer {
 		return goErr.New("discovery server configuration is not compatible with fleet, wrong type")
